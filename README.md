@@ -84,34 +84,6 @@ SE_Project_Final
 └── README.md
 ```
 
-## Installation
-
-1. Clone the repository
-
-```bash
-git clone https://github.com/dilekasewmini/Aqua-Trail-Boat-Safari.git
-```
-
-2. Configure MySQL database settings in `application.properties`
-
-3. Build the project
-
-```bash
-mvn clean install
-```
-
-4. Run the application
-
-```bash
-mvn spring-boot:run
-```
-
-5. Open your browser and navigate to:
-
-```text
-http://localhost:8080
-```
-
 ## Learning Outcomes
 
 * Full-stack web application development
@@ -125,4 +97,4 @@ http://localhost:8080
 
 **Dileka Sewmini**
 
-Software Engineering Undergraduate
+Information Technology Undergraduate
