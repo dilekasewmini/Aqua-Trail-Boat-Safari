@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aqua Trail - Boat Tours & River Adventures</title>
+    <link rel="stylesheet" th:href="@{/user/style.css}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            min-height: 100vh;
+            color: #333;
+            position: relative;
+            overflow-y: auto; /* Changed from hidden to auto for scrolling */
+        }
+        
+        /* Glossy water effect overlay */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 25%),
+                radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.2) 0%, transparent 25%),
+                radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.1) 0%, transparent 30%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 
+                        0 5px 15px rgba(0, 0, 0, 0.15),
+                        inset 0 0 20px rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .my-bookings-btn, .register-btn {
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(26, 41, 128, 0.3);
+        }
+
+        .my-bookings-btn:hover, .register-btn:hover {
+            background: linear-gradient(135deg, #152266 0%, #1fb4b0 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(26, 41, 128, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        .register-btn {
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-profile-link {
+            color: #2c3e50;
+            font-weight: 600;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.92);
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(222, 226, 230, 0.7);
+        }
+
+        .user-profile-link:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(26, 41, 128, 0.3);
+            text-decoration: none;
+        }
+
+        .trips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .trip-card {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 
+                        0 5px 15px rgba(0, 0, 0, 0.15),
+                        inset 0 0 20px rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .trip-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(26, 41, 128, 0.5);
+        }
+
+        .trip-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .trip-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .trip-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .trip-card:hover .trip-image {
+            transform: scale(1.08);
+        }
+
+        .trip-content {
+            padding: 25px;
+        }
+
+        .trip-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .trip-duration {
+            display: inline-block;
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .trip-description {
+            color: #555;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .trip-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 2px solid rgba(222, 226, 230, 0.5);
+        }
+
+        .trip-price {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #27ae60;
+        }
+
+        .trip-price::before {
+            content: "LKR ";
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .view-details-btn {
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(26, 41, 128, 0.3);
+        }
+
+        .view-details-btn:hover {
+            background: linear-gradient(135deg, #152266 0%, #1fb4b0 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(26, 41, 128, 0.4);
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #27ae60;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            z-index: 10;
+        }
+
+        .status-inactive {
+            background: #e74c3c;
+        }
+
+        .no-trips {
+            text-align: center;
+            padding: 80px 20px;
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .no-trips h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .header-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .trips-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚤 Aqua Trail Boat Safari</h1>
+            <div class="header-nav">
+                <div th:if="${session.customer != null}" class="user-profile">
+                    <a href="/profile" class="user-profile-link">
+                        <span th:text="${session.customer.name}">User Name</span>
+                    </a>
+                    <a href="/logout" class="my-bookings-btn">Logout</a>
+                </div>
+                <div th:if="${session.customer == null}">
+                    <a href="/login" class="my-bookings-btn">Login</a>
+                    <a href="/register" class="register-btn">Register</a>
+                </div>
+                <a href="/offers" class="my-bookings-btn">🎁 Offers</a>
+                <a href="/feedback" class="my-bookings-btn">💬 Feedback</a>
+                <a href="/bookings" class="my-bookings-btn">📝 My Bookings</a>
+            </div>
+        </div>
+
+        <div th:if="${trips != null and !trips.empty}" class="trips-grid">
+            <div th:each="trip : ${trips}" class="trip-card" th:onclick="|window.location.href='@{/trip/{id}(id=${trip.id})}'|">
+                <div th:text="${trip.status}" 
+                     th:class="${trip.status == 'active' ? 'status-badge' : 'status-badge status-inactive'}">Status</div>
+                
+                <img th:src="${trip.imageUrl}" th:alt="${trip.tripName}" class="trip-image" 
+                     onerror="this.src='https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500&h=300&fit=crop'">
+                
+                <div class="trip-content">
+                    <h3 th:text="${trip.tripName}" class="trip-title">Trip Name</h3>
+                    
+                    <div th:text="${trip.duration}" class="trip-duration">Duration</div>
+                    
+                    <p th:text="${trip.description}" class="trip-description">Trip description</p>
+                    
+                    <div class="trip-footer">
+                        <div th:text="${trip.price}" class="trip-price">Price</div>
+                        <a th:href="@{/trip/{id}(id=${trip.id})}" class="view-details-btn" onclick="event.stopPropagation()">
+                            Book Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div th:if="${trips == null or trips.empty}" class="no-trips">
+            <h2>🌊 No Adventures Available</h2>
+            <p>Our boat tours are currently being prepared. Check back soon for amazing water adventures!</p>
+        </div>
+    </div>
+
+    <script>
+        // Add loading animation for trip cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.trip-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

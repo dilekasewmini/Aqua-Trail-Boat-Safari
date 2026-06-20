@@ -1,0 +1,63 @@
+body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    margin: 20px; 
+    background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+    min-height: 100vh;
+    color: #333;
+    position: relative;
+    overflow-y: auto; /* Changed from hidden to auto for scrolling */
+}
+
+/* Glossy water effect overlay */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 25%),
+        radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.2) 0%, transparent 25%),
+        radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.1) 0%, transparent 30%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+h1 { 
+    color: #2c3e50; 
+    background: rgba(255, 255, 255, 0.92);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+form { 
+    margin: 20px 0; 
+    background: rgba(255, 255, 255, 0.92);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+button { 
+    background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+    color: white; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(26, 41, 128, 0.3);
+}
+
+button:hover {
+    background: linear-gradient(135deg, #152266 0%, #1fb4b0 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 7px 20px rgba(26, 41, 128, 0.4);
+}

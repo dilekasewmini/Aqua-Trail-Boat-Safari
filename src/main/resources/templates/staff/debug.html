@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff Database Debug</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 20px; 
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            min-height: 100vh;
+            color: #333;
+            position: relative;
+            overflow-y: auto; /* Changed from hidden to auto for scrolling */
+        }
+        
+        /* Glossy water effect overlay */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 25%),
+                radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.2) 0%, transparent 25%),
+                radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.1) 0%, transparent 30%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 12px; 
+            text-align: left; 
+        }
+        
+        th { 
+            background-color: rgba(26, 41, 128, 0.9);
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background-color: rgba(248, 249, 250, 0.7);
+        }
+        
+        .error { 
+            color: #ff416c; 
+            background-color: rgba(255, 230, 230, 0.92);
+            padding: 15px; 
+            margin: 15px 0; 
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 65, 108, 0.3);
+        }
+        
+        .success { 
+            color: #26d0ce; 
+            background-color: rgba(230, 255, 230, 0.92);
+            padding: 15px; 
+            margin: 15px 0; 
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(38, 208, 206, 0.3);
+        }
+        
+        .debug-info { 
+            background-color: rgba(248, 249, 250, 0.92);
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .debug-info h3, .error h3, .success h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        hr {
+            border: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.3);
+            margin: 25px 0;
+        }
+        
+        a {
+            color: #1a2980;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        a:hover {
+            background: rgba(26, 41, 128, 0.92);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 41, 128, 0.3);
+        }
+        
+        ul {
+            padding-left: 20px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        strong {
+            color: #1a2980;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Staff Database Debug Page</h1>
+        
+        <div class="debug-info">
+            <h3>Database Information</h3>
+            <p><strong>Total Staff Count:</strong> <span th:text="${staffCount}">0</span></p>
+        </div>
+
+        <div th:if="${error}" class="error">
+            <h3>Error:</h3>
+            <p th:text="${error}">No error</p>
+        </div>
+
+        <div th:if="${message}" class="success">
+            <h3>Success:</h3>
+            <p th:text="${message}">No message</p>
+        </div>
+
+        <div th:if="${staffList != null and !staffList.isEmpty()}">
+            <h3>Staff in Database:</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Password</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="staff : ${staffList}">
+                        <td th:text="${staff.id}">ID</td>
+                        <td th:text="${staff.name}">Name</td>
+                        <td th:text="${staff.email}">Email</td>
+                        <td th:text="${staff.role}">Role</td>
+                        <td th:text="${staff.password}">Password</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:if="${staffList == null or staffList.isEmpty()}">
+            <p><strong>No staff found in database!</strong></p>
+            <p>This might indicate a database connection issue or the staff table hasn't been created yet.</p>
+        </div>
+
+        <hr>
+        <div>
+            <h3>Quick Actions:</h3>
+            <a href="/staff/login">← Back to Login</a> | 
+            <a href="/staff/debug">🔄 Refresh Debug</a>
+        </div>
+
+        <div class="debug-info">
+            <h3>Test Credentials:</h3>
+            <ul>
+                <li><strong>Admin:</strong> admin@company.com / admin123</li>
+                <li><strong>Manager:</strong> manager@company.com / manager123</li>
+                <li><strong>Booking:</strong> booking@company.com / booking123</li>
+                <li><strong>Marketing:</strong> marketing@company.com / marketing123</li>
+                <li><strong>Captain:</strong> captain@company.com / captain123</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
